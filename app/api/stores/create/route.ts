@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { parseBusinessIdea } from '@/lib/fakeAI'
+import { parseBusinessIdea } from '@/lib/ai'
 import { slugify } from '@/lib/utils'
 
 export async function POST(request: NextRequest) {

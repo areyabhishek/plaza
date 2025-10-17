@@ -7,7 +7,24 @@
 npm install
 ```
 
-### 2. Set Up Stripe (Required for Payments)
+### 2. Set Up Claude AI (Optional but Recommended)
+
+Plaza uses Claude 3.5 Sonnet to generate creative brand names and products. Without it, you'll get basic template-based generation.
+
+1. **Get your API key**:
+   - Go to [https://console.anthropic.com/](https://console.anthropic.com/)
+   - Create an account or log in
+   - Go to API Keys section
+   - Create a new API key (starts with `sk-ant-`)
+
+2. **Add to `.env`**:
+   ```env
+   ANTHROPIC_API_KEY="sk-ant-your_key_here"
+   ```
+
+**Note:** If you skip this step, Plaza will still work - it will use a simple fallback mode for brand generation.
+
+### 3. Set Up Stripe (Required for Payments)
 
 1. **Create a Stripe account** at [stripe.com](https://stripe.com) (or log in)
 2. **Get your test API keys**:
@@ -20,7 +37,7 @@ npm install
    STRIPE_SECRET_KEY="sk_test_your_key_here"
    ```
 
-### 3. Set Up Stripe Webhooks (for Order Completion)
+### 4. Set Up Stripe Webhooks (for Order Completion)
 
 **Option A: Using Stripe CLI** (Recommended for local dev)
 ```bash
@@ -39,14 +56,14 @@ Keep the Stripe CLI running in a separate terminal while developing.
 **Option B: Manual Setup** (Less ideal for local development)
 - You can skip webhooks for now - payments will work, but order confirmation emails won't send
 
-### 4. Run the Development Server
+### 5. Run the Development Server
 ```bash
 npm run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-### 5. Create Your First Store
+### 6. Create Your First Store
 
 1. Enter a business idea in one sentence, for example:
    - "I teach yoga and mindfulness through online courses"
