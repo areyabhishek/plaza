@@ -33,6 +33,13 @@ export async function parseBusinessIdea(idea: string): Promise<BusinessIdea> {
   }
 
   try {
+    // Extract role and goal from the sentence structure
+    const roleMatch = idea.match(/I am (?:a |an )?(.+?),?\s+and/i)
+    const goalMatch = idea.match(/I want to\s+(.+?)\.?$/i) || idea.match(/I(?:'d| would) like to\s+(.+?)\.?$/i)
+
+    const role = roleMatch ? roleMatch[1].trim() : ''
+    const goal = goalMatch ? goalMatch[1].trim() : idea
+
     const message = await anthropic.messages.create({
       model: 'claude-3-5-sonnet-20241022',
       max_tokens: 1024,
@@ -41,25 +48,35 @@ export async function parseBusinessIdea(idea: string): Promise<BusinessIdea> {
           role: 'user',
           content: `You are a branding expert helping creators launch their online stores.
 
-Based on this business idea: "${idea}"
+User Info:
+${role ? `- Role/Identity: ${role}` : ''}
+${goal ? `- Goal: ${goal}` : ''}
+- Full idea: "${idea}"
 
 Generate a JSON response with:
 1. brandName: A catchy, memorable brand name (2-3 words max)
+   - Should reflect their role and what they're selling
+   - Make it unique, professional, and memorable
 2. tagline: A compelling tagline (under 60 characters)
+   - Should capture the essence of what they offer
 3. description: A short description for the store (2-3 sentences)
+   - Written in first person if appropriate
+   - Speaks to their target audience
 4. productSuggestions: An array of exactly 2 products to sell
+   - Should be highly relevant to their role and goal
+   - One should be lower priced, one higher priced
 
 For each product include:
-- name: Product name
-- description: Brief description (1-2 sentences)
-- price: Price in cents (reasonable for the product type)
+- name: Product name (specific and appealing)
+- description: Brief description (1-2 sentences, benefit-focused)
+- price: Price in cents (realistic: $29-$199 range)
 - type: Either "DIGITAL" or "SERVICE"
 
 Rules:
-- Make the brand name unique and professional
-- Keep prices realistic ($29-$149 range typically)
+- Use the role and goal context to create highly relevant suggestions
 - Mix product types if possible (one digital, one service)
 - Be creative but practical
+- Prices should match the perceived value
 
 Return ONLY valid JSON, no markdown or explanation.`,
         },
