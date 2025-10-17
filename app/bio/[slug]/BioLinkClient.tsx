@@ -151,7 +151,7 @@ export default function BioLinkClient({ store }: { store: Store }) {
         {/* Footer */}
         <div className="text-center mt-6">
           <p className="text-white/60 text-sm">
-            Create your own with Business in a Box
+            Create your own with Plaza
           </p>
         </div>
       </div>

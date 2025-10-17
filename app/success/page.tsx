@@ -20,7 +20,7 @@ function SuccessContent() {
   }, [])
 
   const shareText = "Just made my first sale! 🎉"
-  const shareUrl = "https://businessinabox.com" // Update with actual URL
+  const shareUrl = "https://github.com/areyabhishek/plaza"
 
   const handleCopy = (text: string) => {
     navigator.clipboard.writeText(text)
