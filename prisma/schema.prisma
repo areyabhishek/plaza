@@ -1,0 +1,149 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  emailVerified DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  stores        Store[]
+  sessions      Session[]
+  accounts      Account[]
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model Store {
+  id          String    @id @default(cuid())
+  userId      String
+  brandName   String    @unique
+  slug        String    @unique
+  tagline     String?
+  description String?
+  heroImage   String?
+  published   Boolean   @default(false)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  products    Product[]
+  orders      Order[]
+  emailLeads  EmailLead[]
+  analytics   AnalyticsEvent[]
+}
+
+model Product {
+  id          String      @id @default(cuid())
+  storeId     String
+  name        String
+  description String?
+  price       Int         // Price in cents
+  type        String      // 'DIGITAL' or 'SERVICE'
+  imageUrl    String?
+  fileUrl     String?     // For digital products
+  active      Boolean     @default(true)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  store       Store       @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  orderItems  OrderItem[]
+}
+
+model Order {
+  id                String      @id @default(cuid())
+  storeId           String
+  customerEmail     String
+  customerName      String?
+  total             Int         // Total in cents
+  status            String      @default("PENDING") // 'PENDING', 'COMPLETED', 'FAILED', 'REFUNDED'
+  stripeSessionId   String?     @unique
+  stripePaymentId   String?
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+
+  store             Store       @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  items             OrderItem[]
+}
+
+model OrderItem {
+  id        String   @id @default(cuid())
+  orderId   String
+  productId String
+  quantity  Int      @default(1)
+  price     Int      // Price at time of purchase in cents
+
+  order     Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product   Product  @relation(fields: [productId], references: [id])
+}
+
+model EmailLead {
+  id        String   @id @default(cuid())
+  storeId   String
+  email     String
+  name      String?
+  source    String?  // 'storefront' or 'bio'
+  welcomed  Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  store     Store    @relation(fields: [storeId], references: [id], onDelete: Cascade)
+
+  @@unique([storeId, email])
+}
+
+model AnalyticsEvent {
+  id         String    @id @default(cuid())
+  storeId    String
+  eventType  String    // 'PAGE_VIEW', 'CHECKOUT_START', 'PURCHASE', 'EMAIL_CAPTURE'
+  metadata   String?   // JSON string for additional data
+  ipAddress  String?
+  userAgent  String?
+  createdAt  DateTime  @default(now())
+
+  store      Store     @relation(fields: [storeId], references: [id], onDelete: Cascade)
+
+  @@index([storeId, eventType, createdAt])
+}
