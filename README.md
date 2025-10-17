@@ -1,6 +1,11 @@
-# Business in a Box - Creator Storefront Builder
+# Plaza - Creator Storefront Builder
 
 Launch a complete storefront with checkout and bio link in seconds - just describe your business in one sentence!
+
+[![GitHub](https://img.shields.io/github/stars/areyabhishek/plaza?style=social)](https://github.com/areyabhishek/plaza)
+[![Next.js](https://img.shields.io/badge/Next.js-14-black)](https://nextjs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5-blue)](https://www.typescriptlang.org/)
+[![Stripe](https://img.shields.io/badge/Stripe-Integrated-blueviolet)](https://stripe.com/)
 
 ## Features
 

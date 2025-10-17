@@ -43,7 +43,7 @@ export default function HomePage() {
             <Sparkles className="w-8 h-8 text-white" />
           </div>
           <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-            Business in a Box
+            Plaza
           </h1>
           <p className="text-xl text-gray-600">
             Describe your business in one sentence and launch your store instantly
