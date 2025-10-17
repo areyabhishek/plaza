@@ -18,13 +18,24 @@ export async function POST(request: NextRequest) {
     // Parse the business idea using fake AI
     const parsed = parseBusinessIdea(idea)
 
-    // Generate a unique slug
-    let slug = slugify(parsed.brandName)
+    // Generate unique slug and brandName
+    let brandName = parsed.brandName
+    let slug = slugify(brandName)
     let slugSuffix = 0
 
-    // Ensure slug is unique
-    while (await prisma.store.findUnique({ where: { slug } })) {
+    // Ensure both slug and brandName are unique
+    while (
+      await prisma.store.findFirst({
+        where: {
+          OR: [
+            { slug },
+            { brandName }
+          ]
+        }
+      })
+    ) {
       slugSuffix++
+      brandName = `${parsed.brandName} ${slugSuffix}`
       slug = `${slugify(parsed.brandName)}-${slugSuffix}`
     }
 
@@ -46,7 +57,7 @@ export async function POST(request: NextRequest) {
     const store = await prisma.store.create({
       data: {
         userId: user.id,
-        brandName: parsed.brandName,
+        brandName,
         slug,
         tagline: parsed.tagline,
         description: parsed.description,

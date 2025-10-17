@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { formatPrice } from '@/lib/utils'
 import { Eye, ExternalLink, Copy, Check, Sparkles } from 'lucide-react'
 
@@ -30,9 +30,14 @@ export default function DashboardClient({ store: initialStore }: { store: Store 
   const [store, setStore] = useState(initialStore)
   const [copied, setCopied] = useState(false)
   const [saving, setSaving] = useState(false)
+  const [storeUrl, setStoreUrl] = useState('')
+  const [bioUrl, setBioUrl] = useState('')
 
-  const storeUrl = `${window.location.origin}/@${store.slug}`
-  const bioUrl = `${window.location.origin}/bio/${store.slug}`
+  // Set URLs on client side only
+  useEffect(() => {
+    setStoreUrl(`${window.location.origin}/@${store.slug}`)
+    setBioUrl(`${window.location.origin}/bio/${store.slug}`)
+  }, [store.slug])
 
   const handlePublish = async () => {
     setSaving(true)
